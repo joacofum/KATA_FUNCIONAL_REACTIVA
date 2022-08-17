@@ -11,4 +11,5 @@ public interface InterfaceMovieService {
     Mono<Movie> save(Movie movie);
     Mono<Movie> update(Movie movie, String movieId);
     Mono<Void> deleteById(String MovieId);
+    Mono<Movie> addActorToMovie(String movieId, String actor);
 }

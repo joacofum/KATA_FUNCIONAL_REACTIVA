@@ -4,11 +4,13 @@ package com.example.demo.controllers;
 import com.example.demo.models.Movie;
 import com.example.demo.services.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -18,22 +20,15 @@ public class MovieController {
     private MovieService movieService;
 
     @GetMapping("/allMovies")
-    public ResponseEntity<Flux<Movie>> getAllMovies(){
-        return ResponseEntity
-                .ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(movieService.findAllMovies());
+    public Flux<Movie> getAllMovies(){
+        return movieService.findAllMovies();
     }
 
     @GetMapping("/getMovie/{id}")
-    public Mono<ResponseEntity<Movie>> getMovieById(@PathVariable("id") String MovieId){
+    public Mono<Movie> getMovieById(@PathVariable("id") String MovieId){
         return movieService
                 .findById(MovieId)
-                .map(movie -> ResponseEntity
-                        .ok()
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(movie)
-                );
+                .map(movie -> movie);
     }
 
     @PostMapping("/addMovie")
@@ -50,8 +45,55 @@ public class MovieController {
 
     @DeleteMapping("/deleteMovieById/{id}")
     public Mono<Void> deleteMovieById(@PathVariable("id") String movieId){
-        return movieService.deleteById(movieId);
+        return movieService
+                .deleteById(movieId);
     }
 
+    @GetMapping("/getMoviesByCategory/{category}")
+    public Flux<Movie> getMoviesByCategory(@PathVariable("category") String categoria){
+        return movieService
+                .findAllMovies()
+                .filter(movie -> movie.getCategoria().equals(categoria))
+                .map(movie -> movie);
+    }
+
+    @GetMapping("/getMoviesByYear/{year}")
+    public Flux<Movie> getMoviesByYear(@PathVariable("year") String anio){
+        return movieService
+                .findAllMovies()
+                .filter(movie -> movie.getAnio().equals(anio))
+                .map(movie -> movie);
+    }
+
+    @GetMapping("/getBoxOfficeFromMovie/{id}")
+    public Mono<String> getBoxOfficeFromMovie(@PathVariable("id") String movieId){
+        return movieService
+                .findById(movieId)
+                .map(movie -> "La recaudación fue de U$S " + new BigDecimal(movie.getTaquilla() - movie.getPresupuesto()));
+    }
+
+    @GetMapping("/getBoxOfficeFromCategory/{category}")
+    public Mono<String> getBoxOfficeFromCategory(@PathVariable("category") String categoria){
+        Double totalTaquilla = movieService
+                .findAllMovies()
+                .filter(movie -> movie.getCategoria().equals(categoria))
+                .collect(Collectors.summingDouble(Movie::getTaquilla))
+                .block();
+
+        Double totalPresupuesto = movieService
+                .findAllMovies()
+                .filter(movie -> movie.getCategoria().equals(categoria))
+                .collect(Collectors.summingDouble(Movie::getPresupuesto))
+                .block();
+
+        return Mono.just("La recaudación fue de U$S " + new BigDecimal(totalTaquilla - totalPresupuesto));
+    }
+
+    @PutMapping("/addActorToMovie/{id}")
+    public Mono<Movie> addActorToMovie(@PathVariable("id") String movieId, @RequestBody String actor){
+        return movieService
+                .addActorToMovie(movieId, actor);
+
+    }
 
 }

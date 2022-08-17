@@ -3,6 +3,7 @@ package com.example.demo.models;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +16,10 @@ public class Movie {
     private List<String> actores;
     private String categoria;
     private String anio;
+
+    private Double presupuesto;
+
+    private Double taquilla;
 
     public String getId() {
         return id;
@@ -38,6 +43,14 @@ public class Movie {
 
     public String getAnio() {
         return anio;
+    }
+
+    public Double getPresupuesto() {
+        return presupuesto;
+    }
+
+    public Double getTaquilla() {
+        return taquilla;
     }
 
     public void setId(String id) {
@@ -66,5 +79,13 @@ public class Movie {
 
     public void setAnio(String anio) {
         this.anio = anio;
+    }
+
+    public void setPresupuesto(Double presupuesto) {
+        this.presupuesto = presupuesto;
+    }
+
+    public void setTaquilla(Double taquilla) {
+        this.taquilla = taquilla;
     }
 }
