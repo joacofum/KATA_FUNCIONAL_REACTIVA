@@ -101,4 +101,12 @@ public class MovieController {
                 .addActorToMovie(movieId, actor);
     }
 
+    @GetMapping("/getMoviesFromActor/{actor}")
+    public Flux<String> getMoviesFromActor(@PathVariable("actor") String actor){
+        return movieService
+                .findAllMovies()
+                .filter(movie -> movie.getActores().contains(actor))
+                .map(movie -> actor + " actuó en " + movie.getNombre().concat("\n"));
+    }
+
 }
