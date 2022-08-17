@@ -9,22 +9,12 @@ import java.util.UUID;
 @Document(collection = "movies")
 public class Movie {
     @Id
-    private String id;
+    private String id = UUID.randomUUID().toString();
     private String nombre;
     private String idioma;
     private List<String> actores;
     private String categoria;
-
     private String anio;
-
-    public Movie(String nombre, String idioma, List<String> actores, String categoria, String anio) {
-        this.anio = anio;
-        this.id = UUID.randomUUID().toString();
-        this.nombre = nombre;
-        this.idioma = idioma;
-        this.actores = actores;
-        this.categoria = categoria;
-    }
 
     public String getId() {
         return id;

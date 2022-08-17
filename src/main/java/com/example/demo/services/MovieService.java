@@ -18,8 +18,8 @@ public class MovieService implements InterfaceMovieService{
     }
 
     @Override
-    public Mono<Movie> findById(String MovieId) {
-        return repository.findById(MovieId);
+    public Mono<Movie> findById(String movieId) {
+        return repository.findById(movieId);
     }
 
     @Override
@@ -29,13 +29,25 @@ public class MovieService implements InterfaceMovieService{
 
     @Override
     public Mono<Movie> update(Movie movie, String movieId) {
-        return repository.findById(movieId).flatMap(movie1 -> {movie1.setId(movieId);
-            return save(movie);
-        });
+        return repository
+                .findById(movieId)
+                .map(movie1 -> {
+                    movie1.setId(movieId);
+                    movie1.setNombre(movie.getNombre());
+                    movie1.setActores(movie.getActores());
+                    movie1.setIdioma(movie.getIdioma());
+                    movie1.setCategoria(movie.getCategoria());
+                    movie1.setAnio(movie.getAnio());
+                    return movie1;
+                })
+                .flatMap(this::save);
     }
 
     @Override
-    public Mono<Void> deleteById(String MovieId) {
-        return repository.deleteById(MovieId);
+    public Mono<Void> deleteById(String movieId) {
+        return repository
+                .findById(movieId)
+                .flatMap(movie -> repository.deleteById(movie.getId()));
     }
+
 }

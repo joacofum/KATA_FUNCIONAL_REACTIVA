@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -42,20 +43,14 @@ public class MovieController {
     }
 
     @PutMapping("/updateMovie/{id}")
-    public Mono<Movie> updateMovie(@RequestBody Movie movie, @PathVariable("id") String MovieId){
+    public Mono<Movie> updateMovie(@RequestBody Movie movie, @PathVariable("id") String movieId){
         return movieService
-                .update(movie, MovieId);
+                .update(movie, movieId);
     }
 
     @DeleteMapping("/deleteMovieById/{id}")
-    public Mono<Void> deleteMovie(@PathVariable("id") String MovieId){
-        return movieService
-                .deleteById(MovieId);
+    public Mono<Void> deleteMovieById(@PathVariable("id") String movieId){
+        return movieService.deleteById(movieId);
     }
-
-
-
-
-
 
 }
