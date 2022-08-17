@@ -69,7 +69,10 @@ public class MovieController {
     public Mono<String> getBoxOfficeFromMovie(@PathVariable("id") String movieId){
         return movieService
                 .findById(movieId)
-                .map(movie -> "La recaudación fue de U$S " + new BigDecimal(movie.getTaquilla() - movie.getPresupuesto()));
+                .map(movie -> "La recaudación de"
+                        + movie.getNombre()
+                        + " fue de U$S "
+                        + new BigDecimal(movie.getTaquilla() - movie.getPresupuesto()));
     }
 
     @GetMapping("/getBoxOfficeFromCategory/{category}")
@@ -86,14 +89,16 @@ public class MovieController {
                 .collect(Collectors.summingDouble(Movie::getPresupuesto))
                 .block();
 
-        return Mono.just("La recaudación fue de U$S " + new BigDecimal(totalTaquilla - totalPresupuesto));
+        return Mono.just("La recaudación total de las películas con categoría"
+                + categoria
+                + " fue de U$S "
+                + new BigDecimal(totalTaquilla - totalPresupuesto));
     }
 
     @PutMapping("/addActorToMovie/{id}")
     public Mono<Movie> addActorToMovie(@PathVariable("id") String movieId, @RequestBody String actor){
         return movieService
                 .addActorToMovie(movieId, actor);
-
     }
 
 }
